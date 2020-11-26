@@ -1,5 +1,5 @@
 
-using DataLoaders
+using BasicDataLoaders
 using Test
 
 @testset "input/output operations" begin

@@ -3,7 +3,7 @@
 #
 # Lucas Ondel 2020
 
-module DataLoaders
+module BasicDataLoaders
 
 using BSON
 
