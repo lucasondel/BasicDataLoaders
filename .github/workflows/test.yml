@@ -2,10 +2,15 @@ name: test
 on: [push]
 jobs:
     test:
-        runs-on: [ubuntu-latest, windows-latest, macOS-latest]
+        strategy:
+            matrix:
+                julia-version: ['1.4.0', '1.5.0']
+                os: [ubuntu-latest, windows-latest, -macOS-latest]
+
+        runs-on: ${{ matrix.os }}
         steps:
             - uses: actions/checkout@latest
             - uses: julia-actions/setup-julia@latest
               with:
-                version: 1.5.0
+                version: ${{ matrix.julia-version }}
             - run: julia --project=./ -e "using Pkg; Pkg.instantiate(); Pkg.test()"
