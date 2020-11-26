@@ -2,6 +2,12 @@
 #
 # Lucas Ondel 2020
 
+function Base.show(io::IO, dl::AbstractDataLoader)
+    println(io, "$(typeof(dl))")
+    println(io, "  data: $(typeof(dl.data))")
+    print(io, "  batchsize: $(dl.batchsize)")
+end
+
 #######################################################################
 # VectorDataLoader
 
