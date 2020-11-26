@@ -9,7 +9,7 @@ jobs:
 
         runs-on: ${{ matrix.os }}
         steps:
-            - uses: actions/checkout@latest
+            - uses: actions/checkout@v2
             - uses: julia-actions/setup-julia@latest
               with:
                 version: ${{ matrix.julia-version }}
