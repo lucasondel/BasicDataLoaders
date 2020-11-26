@@ -1,4 +1,4 @@
-# DataLoaders [![Actions Status: test](https://github.com/iondel/DataLoaders/workflows/test/badge.svg)](https://github.com/iondel/DataLoaders/actions?query=workflow%3Atest)
+# BasicDataLoaders [![Actions Status: test](https://github.com/iondel/DataLoaders/workflows/test/badge.svg)](https://github.com/iondel/DataLoaders/actions?query=workflow%3Atest)
 
 Julia package providing simple data loaders to train machine learning
 systems.
@@ -22,7 +22,7 @@ interfaces, allowing them to be used in parallel loops with
 
 Here is a complete example:
 ```julia
-julia> using DataLoaders
+julia> using BasicDataLoaders
 
 julia> data = Array(1:10)
 10-element Array{Int64,1}:
