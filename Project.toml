@@ -1,0 +1,7 @@
+name = "DataLoaders"
+uuid = "f0789d0e-9b93-4002-b86d-d7fb1957141c"
+authors = ["Lucas Ondel <iondel@fit.vutbr.cz>"]
+version = "0.1.0"
+
+[deps]
+BSON = "fbb218c0-5317-5bc6-957e-2ee96dd4b1f0"
