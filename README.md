@@ -16,8 +16,11 @@ The data loaders are constructed as follows:
 vdl = VectorDataLoader(vectordata[, batchsize = 1, preprocess = (x) -> x])
 mdl = MatrixDataLoader(matrixdata[, batchsize = 1, preprocess = (x) -> x])
 ```
+Importantly, the both data loaders implement the iterating and indexing
+interface, allowing them to be used in parallel loop with
+`Distributed`.
 
-Complete example:
+Here is a complete example:
 ```julia
 julia> using DataLoaders
 
