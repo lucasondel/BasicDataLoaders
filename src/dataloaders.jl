@@ -8,6 +8,8 @@ function Base.show(io::IO, dl::AbstractDataLoader)
     print(io, "  batchsize: $(dl.batchsize)")
 end
 
+_index(i, batchsize) = (i-1) * batchsize + 1
+
 #######################################################################
 # VectorDataLoader
 
@@ -44,10 +46,22 @@ Base.eltype(dl::VectorDataLoader) = eltype(dl.data)
 
 function Base.getindex(dl::VectorDataLoader, i)
     1 <= i <= length(dl) || throw(BoundsError(dl, i))
-    start = (i-1) * dl.batchsize + 1
+    start = _index(i, dl.batchsize)
     offset = min(start + dl.batchsize - 1, size(dl.data,1))
     dl.f(dl.data[start:offset])
 end
+
+function Base.getindex(dl::VectorDataLoader, ur::UnitRange)
+    1 <= ur.start <= length(dl) || throw(BoundsError(dl, ur.start))
+    1 <= ur.stop <= length(dl) || throw(BoundsError(dl, ur.stop))
+
+    N = size(dl.data, 1)
+    start = _index(ur.start, dl.batchsize)
+    offset = min(_index(ur.stop, dl.batchsize) + dl.batchsize - 1, N)
+    VectorDataLoader(dl.data[start:offset], batchsize = dl.batchsize,
+                     preprocess = dl.f)
+end
+
 Base.firstindex(dl::VectorDataLoader) = 1
 Base.lastindex(dl::VectorDataLoader) = length(dl)
 
@@ -88,10 +102,22 @@ Base.eltype(dl::MatrixDataLoader{T}) where T = T
 
 function Base.getindex(dl::MatrixDataLoader, i)
     1 <= i <= length(dl) || throw(BoundsError(dl, i))
-    start = (i-1) * dl.batchsize + 1
+    start = _index(i, dl.batchsize)
     offset = min(start + dl.batchsize - 1, size(dl.data,2))
     dl.f(dl.data[:, start:offset])
 end
+
+function Base.getindex(dl::MatrixDataLoader, ur::UnitRange)
+    1 <= ur.start <= length(dl) || throw(BoundsError(dl, ur.start))
+    1 <= ur.stop <= length(dl) || throw(BoundsError(dl, ur.stop))
+
+    N = size(dl.data, 2)
+    start = _index(ur.start, dl.batchsize)
+    offset = min(_index(ur.stop, dl.batchsize) + dl.batchsize - 1, N)
+    MatrixDataLoader(dl.data[:, start:offset], batchsize = dl.batchsize,
+                     preprocess = dl.f)
+end
+
 Base.firstindex(dl::MatrixDataLoader) = 1
 Base.lastindex(dl::MatrixDataLoader) = length(dl)
 

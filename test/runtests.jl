@@ -1,5 +1,6 @@
 
 using BasicDataLoaders
+using Distributed
 using Test
 
 @testset "input/output operations" begin
@@ -47,6 +48,13 @@ end
         for (i, batch) in enumerate(dl2)
             @test all((2 .* dl[i]) .== dl2[i])
         end
+
+        N = 10
+        dl = VectorDataLoader(1:10, batchsize = 3, preprocess = x -> 2*x)
+        res = @distributed (+) for x in dl
+            sum(x)
+        end
+        @test res == N*(N+1)
     end
 
     @testset "MatrixDataLoader" begin
@@ -70,6 +78,13 @@ end
         for (batch, batch2) in zip(dl, dl2)
             @test all((2 * batch) .== batch2)
         end
+
+        dl = MatrixDataLoader([1 1 1; 2 2 2; 3 3 3], batchsize = 3,
+                              preprocess = x -> 2*x)
+        res = @distributed (+) for x in dl
+            sum(x)
+        end
+        @test res == 36
     end
 end
 
