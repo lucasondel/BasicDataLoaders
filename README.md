@@ -64,7 +64,7 @@ julia> for batch in dl println(batch) end
 [20; 40; 60]
 ```
 
-Because it is very common for data loaders to load data from disk, the package also provide two convience functions to  easily read and write files:
+Because it is very common for data loaders to load data from disk, the package also provide two convenience functions to  easily read and write files:
 ```julia
 save("path/to/file[.bson]", obj)
 obj = load("path/to/file[.bson]")
