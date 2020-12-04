@@ -1,7 +1,10 @@
 
 using BasicDataLoaders
 using Distributed
+using Documenter
 using Test
+
+doctest(BasicDataLoaders)
 
 @testset "input/output operations" begin
     obj = Float32[1, 2, 3]
@@ -25,66 +28,34 @@ using Test
     @test all(lobj .≈ obj)
 end
 
-@testset "Data loaders" begin
-    @testset "VectorDataLoader" begin
-        obj = Float32[i for i in 1:10]
+@testset "Data loader" begin
+    obj = Float32[i for i in 1:10]
 
-        dl = VectorDataLoader(obj, batchsize = 1)
-        @test typeof(dl) == VectorDataLoader{Array{Float32, 1}}
-        @test_throws ArgumentError VectorDataLoader(obj, batchsize = 0)
-        @test_throws ArgumentError VectorDataLoader(obj, batchsize = -1)
-        @test_throws ArgumentError VectorDataLoader([], batchsize = 1)
+    dl = DataLoader(obj, batchsize = 1)
+    @test typeof(dl) == DataLoader{Array{Float32, 1}}
+    @test_throws ArgumentError DataLoader(obj, batchsize = 0)
+    @test_throws ArgumentError DataLoader(obj, batchsize = -1)
+    @test_throws ArgumentError DataLoader([], batchsize = 1)
 
-        dl = VectorDataLoader(obj, batchsize = 3)
-        @test length(dl) == 4
-        @test all(dl[1] .== [1, 2, 3])
-        @test all(dl[2] .== [4, 5, 6])
-        @test all(dl[3] .== [7, 8, 9])
-        @test all(dl[4] .== [10])
-        @test all(dl[1] .== dl[begin])
-        @test all(dl[4] .== dl[end])
+    dl = DataLoader(obj, batchsize = 3)
+    @test length(dl) == 4
+    @test all(dl[1] .== [1, 2, 3])
+    @test all(dl[2] .== [4, 5, 6])
+    @test all(dl[3] .== [7, 8, 9])
+    @test all(dl[4] .== [10])
+    @test all(dl[1] .== dl[begin])
+    @test all(dl[4] .== dl[end])
 
-        dl2 = VectorDataLoader(obj, batchsize = 3, preprocess = x -> 2 .* x)
-        for (i, batch) in enumerate(dl2)
-            @test all((2 .* dl[i]) .== dl2[i])
-        end
-
-        N = 10
-        dl = VectorDataLoader(1:10, batchsize = 3, preprocess = x -> 2*x)
-        res = @distributed (+) for x in dl
-            sum(x)
-        end
-        @test res == N*(N+1)
+    dl2 = DataLoader(obj, batchsize = 3, preprocess = x -> 2 .* x)
+    for (i, batch) in enumerate(dl2)
+        @test all((2 .* dl[i]) .== dl2[i])
     end
 
-    @testset "MatrixDataLoader" begin
-        obj = Float32[2*(j-1) + i for i in 1:2, j in 1:4]
-
-        dl = MatrixDataLoader(obj, batchsize = 1)
-        @test typeof(dl) == MatrixDataLoader{Array{Float32, 2}}
-        @test_throws ArgumentError MatrixDataLoader(obj, batchsize = 0)
-        @test_throws ArgumentError MatrixDataLoader(obj, batchsize = -1)
-        @test_throws ArgumentError MatrixDataLoader(Array{Float64}(undef, 1, 0), batchsize = 1)
-        @test_throws ArgumentError MatrixDataLoader(Array{Float64}(undef, 0, 1), batchsize = 1)
-
-        dl = MatrixDataLoader(obj, batchsize = 3)
-        @test length(dl) == 2
-        @test all(dl[1] .== [1 3 5; 2 4 6])
-        @test all(dl[2] .== [7; 8])
-        @test all(dl[1] .== dl[begin])
-        @test all(dl[2] .== dl[end])
-
-        dl2 = MatrixDataLoader(obj, batchsize = 3, preprocess = x -> 2 * x)
-        for (batch, batch2) in zip(dl, dl2)
-            @test all((2 * batch) .== batch2)
-        end
-
-        dl = MatrixDataLoader([1 1 1; 2 2 2; 3 3 3], batchsize = 3,
-                              preprocess = x -> 2*x)
-        res = @distributed (+) for x in dl
-            sum(x)
-        end
-        @test res == 36
+    N = 10
+    dl = DataLoader(1:10, batchsize = 3, preprocess = x -> 2*x)
+    res = @distributed (+) for x in dl
+        sum(x)
     end
+    @test res == N*(N+1)
 end
 

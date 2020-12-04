@@ -32,9 +32,8 @@ abstract type AbstractDataLoader{T} end
 #######################################################################
 # Concrete data loaders
 
-export MatrixDataLoader
-export VectorDataLoader
+export DataLoader
 
-include("dataloaders.jl")
+include("dataloader.jl")
 
 end
