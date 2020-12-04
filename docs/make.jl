@@ -5,4 +5,5 @@ using BasicDataLoaders
 
 makedocs(sitename="BasicDataLoaders")
 
-deploydocs(repo = "github.com/lucasondel/BasicDataLoaders.git")
+deploydocs(repo = "github.com/lucasondel/BasicDataLoaders.git",
+           devbranch = "main")
