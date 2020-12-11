@@ -14,3 +14,8 @@ The package can be installed with the Julia package manager. From the Julia REPL
 ```julia
 pkg> add BasicDataLoaders
 ```
+
+Have a look at the [documentation](https://lucasondel.github.io/BasicDataLoaders/stable/) to get started!
+## Authors
+
+Lucas Ondel, Brno University of Technology, 2020
