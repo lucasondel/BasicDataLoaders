@@ -17,19 +17,30 @@ Julia REPL, type `]` to enter the Pkg REPL mode and run:
 pkg> add BasicDataLoaders
 ```
 
-## Usage
+## API
 
-A data loader is constructed as follows:
-```julia
-dl = DataLoader(data[, batchsize = 1, preprocess = (x) -> x])
+The package provide a simple data loader object:
+```@docs
+DataLoader
 ```
-The user can provide a preprocessing function with the keyword argument
-`preprocess`. By default, the pre-processing function is simply
-identity. Importantly, the data loader implements the iterating and
-indexing interfaces, allowing it to be used in parallel loops with
-`Distributed`.
 
-Here is a complete example:
+!!! note
+
+    `DataLoder` supports the iterating and indexing interface and,
+    consequently, it can be used in [distributed for
+    loops](https://docs.julialang.org/en/v1/manual/distributed-computing/).
+
+Because it is very common for data loaders to load data from disk, the
+package also provides two convenience functions to  easily read and
+write files:
+```@docs
+save
+load
+```
+
+## Examples
+
+Here is a complete example that simply print the batches:
 ```jldoctest
 julia> using BasicDataLoaders
 
@@ -45,15 +56,41 @@ julia> for batch in dl println(batch) end
 10:10
 ```
 
-Because it is very common for data loaders to load data from disk, the
-package also provides two convenience functions to  easily read and
-write files:
-```julia
-save("path/to/file[.bson]", obj)
-obj = load("path/to/file[.bson]")
+Here is another example that computes the sum of all even numbers
+between 2 and 200 included:
+```jldoctest
+julia> using BasicDataLoaders
+
+julia> dl = DataLoader(1:100, batchsize = 10, preprocess = x -> 2*x)
+DataLoader{UnitRange{Int64}}
+  data: UnitRange{Int64}
+  batchsize: 10
+
+julia> sum(sum(batch) for batch in dl)
+10100
 ```
-The files are stored in the [BSON format](http://bsonspec.org/) using
-the [BSON julia package](https://github.com/JuliaIO/BSON.jl). Note that
-both `save` or `load` will add the ".bson" extension to the path if it
-doesn't have it already.
+
+Finally, here is an example simulating loading data from files. In
+practice, you can replace the printing function with the [`load`](@ref)
+function.
+```jldoctest
+julia> using BasicDataLoaders
+
+julia> files = ["file1.bson", "file2.bson", "file3.bson"]
+3-element Array{String,1}:
+ "file1.bson"
+ "file2.bson"
+ "file3.bson"
+
+julia> dl = DataLoader(files, batchsize = 2, preprocess = x -> println("load and merge files $x"))
+DataLoader{Array{String,1}}
+  data: Array{String,1}
+  batchsize: 2
+
+julia> for batch in dl println("do something on this batch") end
+load and merge files ["file1.bson", "file2.bson"]
+do something on this batch
+load and merge files ["file3.bson"]
+do something on this batch
+```
 

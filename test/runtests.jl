@@ -53,6 +53,8 @@ end
 
     N = 10
     dl = DataLoader(1:10, batchsize = 3, preprocess = x -> 2*x)
+    addprocs(2)
+    @everywhere using BasicDataLoaders
     res = @distributed (+) for x in dl
         sum(x)
     end

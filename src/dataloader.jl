@@ -11,15 +11,36 @@ end
 _index(i, batchsize) = (i-1) * batchsize + 1
 
 #######################################################################
-# VectorDataLoader
+# DataLoader
 
+"""
+    struct DataLoader
+        data
+        batchsize
+    end
+
+# Constructor
+
+    DataLoader(data[, batchsize = 1, preprocess = x -> x])
+
+where `data` is a sequence of elements to iterate over, `batchsize` is
+the size of each batch and `preprocess` is a user-defined function to
+apply on each batch. By default, `preprocess` is simpy the identity
+function.
+
+!!! warning
+
+    When iterating, the final batch may have a size smaller
+    than `batchsize`.
+
+"""
 struct DataLoader{T<:AbstractVector}  <: AbstractDataLoader{T}
     data::T
     batchsize::UInt
     f::Function
 
     function DataLoader(data::AbstractVector; batchsize = 1, preprocess = x -> x)
-        length(data) > 0 || throw(ArgumentError("cannot create a VectorDataLoader from an empty collection"))
+        length(data) > 0 || throw(ArgumentError("cannot create a DataLoader from an empty collection"))
         batchsize >= 1 || throw(ArgumentError("`batchsize = $batchsize` should greater or equal to 1"))
         new{typeof(data)}(data, batchsize, preprocess)
     end
