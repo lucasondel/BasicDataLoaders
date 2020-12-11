@@ -24,7 +24,7 @@ doctest(BasicDataLoaders)
     @test isfile(path*".bson")
 
     lobj = load(path*".bson")
-    @test typeof(lobj) == Array{Float32, 1}
+    @test typeof(lobj) == Array{Float64, 1}
     @test all(lobj .≈ obj)
 end
 
