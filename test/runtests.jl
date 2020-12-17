@@ -46,6 +46,14 @@ end
     @test all(dl[1] .== dl[begin])
     @test all(dl[4] .== dl[end])
 
+    sobj = [[1, 1], [2, 2], [3, 3]]
+    v = [3, 4]
+    sdl = DataLoader(obj, batchsize = 2)
+    sdl2 = DataLoader(obj, batchsize = 2, preprocess_element = x -> v .* x)
+    for (i, batch) in enumerate(sdl2)
+        @test all((sdl2[i]) .== [v .* a for a in sdl[i]])
+    end
+
     dl2 = DataLoader(obj, batchsize = 3, preprocess = x -> 2 .* x)
     for (i, batch) in enumerate(dl2)
         @test all((2 .* dl[i]) .== dl2[i])
